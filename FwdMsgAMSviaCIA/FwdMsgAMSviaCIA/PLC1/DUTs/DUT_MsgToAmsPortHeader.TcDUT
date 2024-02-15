@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <DUT Name="DUT_MsgToAmsPortHeader" Id="{dcb19c93-a31a-4949-8397-00a83c3b92d2}">
+    <Declaration><![CDATA[TYPE
+    DUT_MsgToAmsPortHeader :
+    STRUCT
+        nServiceCode : UDINT;
+        nClassId : UDINT;
+        nInstanceId : UDINT;
+        nAttributeId : UDINT;
+        nReservedId : UDINT;
+        nGeneralStatus : UDINT;
+        nAdditionalStatus : UDINT;
+        nDataLen : UDINT;
+    END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

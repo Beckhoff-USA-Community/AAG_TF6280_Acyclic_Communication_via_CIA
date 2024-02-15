@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <DUT Name="DUT_IncomingMsgRequest" Id="{7b021bd8-da94-4954-8897-62c19ed6a9ed}">
+    <Declaration><![CDATA[TYPE
+    DUT_IncomingMsgRequest :
+    STRUCT
+        reqHdr : DUT_MsgToAmsPortHeader;
+        reqData : ARRAY[0..991] OF BYTE;
+    END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

@@ -1,0 +1,73 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <GVL Name="CONST" Id="{5c2d7df7-071c-4312-ad8b-a35027d72123}">
+    <Declaration><![CDATA[{attribute 'qualified_only'}
+VAR_GLOBAL CONSTANT
+    //Service Codes
+    CN_SC_REPLY_MASK : BYTE := 16#80;
+    CN_SC_GET_ATTR_SINGLE : BYTE := 16#0E;
+    CN_SC_SET_ATTR_SINGLE : BYTE := 16#10;
+
+    //MPath Segment Types
+    CN_LOGICAL_SEGMENT : BYTE := 16#20;
+
+    CN_LOGICAL_SEG_CLASS : BYTE := 16#00;
+    CN_LOGICAL_SEG_INSTANCE : BYTE := 16#04;
+    CN_LOGICAL_SEG_STRUCT : BYTE := 16#08;
+    CN_LOGICAL_SEG_ATTRIBUTE : BYTE := 16#10;
+
+    CN_LOGICAL_SEG_8_BIT : BYTE := 16#00;
+    CN_LOGICAL_SEG_16_BIT : BYTE := 16#01;
+    CN_LOGICAL_SEG_32_BIT : BYTE := 16#02;
+
+    CN_IOI_SEG_CLASS_8 : BYTE := CN_LOGICAL_SEGMENT OR CN_LOGICAL_SEG_CLASS OR CN_LOGICAL_SEG_8_BIT;
+    CN_IOI_SEG_CLASS_16 : BYTE := CN_LOGICAL_SEGMENT OR CN_LOGICAL_SEG_CLASS OR CN_LOGICAL_SEG_16_BIT;
+    CN_IOI_SEG_CLASS_32 : BYTE := CN_LOGICAL_SEGMENT OR CN_LOGICAL_SEG_CLASS OR CN_LOGICAL_SEG_32_BIT;
+
+    CN_IOI_SEG_INSTANCE_8 : BYTE := CN_LOGICAL_SEGMENT OR CN_LOGICAL_SEG_INSTANCE OR CN_LOGICAL_SEG_8_BIT;
+    CN_IOI_SEG_INSTANCE_16 : BYTE := CN_LOGICAL_SEGMENT OR CN_LOGICAL_SEG_INSTANCE OR CN_LOGICAL_SEG_16_BIT;
+    CN_IOI_SEG_INSTANCE_32 : BYTE := CN_LOGICAL_SEGMENT OR CN_LOGICAL_SEG_INSTANCE OR CN_LOGICAL_SEG_32_BIT;
+
+    CN_IOI_SEG_MEMBER_8 : BYTE := CN_LOGICAL_SEGMENT OR CN_LOGICAL_SEG_STRUCT OR CN_LOGICAL_SEG_8_BIT;
+    CN_IOI_SEG_MEMBER_16 : BYTE := CN_LOGICAL_SEGMENT OR CN_LOGICAL_SEG_STRUCT OR CN_LOGICAL_SEG_16_BIT;
+    CN_IOI_SEG_MEMBER_32 : BYTE := CN_LOGICAL_SEGMENT OR CN_LOGICAL_SEG_STRUCT OR CN_LOGICAL_SEG_32_BIT;
+
+    CN_IOI_SEG_ATTRIBUTE_8 : BYTE := CN_LOGICAL_SEGMENT OR CN_LOGICAL_SEG_ATTRIBUTE OR CN_LOGICAL_SEG_8_BIT;
+    CN_IOI_SEG_ATTRIBUTE_16 : BYTE := CN_LOGICAL_SEGMENT OR CN_LOGICAL_SEG_ATTRIBUTE OR CN_LOGICAL_SEG_16_BIT;
+    CN_IOI_SEG_ATTRIBUTE_32 : BYTE := CN_LOGICAL_SEGMENT OR CN_LOGICAL_SEG_ATTRIBUTE OR CN_LOGICAL_SEG_32_BIT;
+
+    //General Status Codes
+    CN_GRC_SUCCESS : BYTE := 16#00; // We done good...               */
+    CN_GRC_CONNECTION_FAILURE : BYTE := 16#01; // A connection related service failed along the connection path.             */
+    CN_GRC_NO_RESOURCE : BYTE := 16#02; // Resource(S) unavailable       */
+    CN_GRC_BAD_DATA : BYTE := 16#03; // Obj specific data bad         */
+    CN_GRC_BAD_IOI : BYTE := 16#04; // IOI hosed                     */
+    CN_GRC_BAD_CLASS_INSTANCE : BYTE := 16#05; // Class/instance unknown        */
+    CN_GRC_PARTIAL_DATA : BYTE := 16#06; // NOT all expected data sent    */
+    CN_GRC_CONN_LOST : BYTE := 16#07; // Messaging connection lost     */
+    CN_GRC_BAD_SERVICE : BYTE := 16#08; // Unimplimented service code    */
+    CN_GRC_BAD_ATTR_DATA : BYTE := 16#09; // Bad attribute data value      */
+    CN_GRC_ATTR_LIST_ERROR : BYTE := 16#0A; // Get/set attr list failed      */
+    CN_GRC_ALREADY_IN_MODE : BYTE := 16#0B; // Obj already in requested mode */
+    CN_GRC_BAD_OBJ_MODE : BYTE := 16#0C; // Obj NOT in proper mode        */
+    CN_GRC_OBJ_ALREADY_EXISTS : BYTE := 16#0D; // Object already created        */
+    CN_GRC_ATTR_NOT_SETTABLE : BYTE := 16#0E; // Set OF get only attr tried    */
+    CN_GRC_PERMISSION_DENIED : BYTE := 16#0F; // Insufficient access permission*/
+    CN_GRC_SET_ATTR_WRONG_STATE : BYTE := 16#10; // Set attribute NOT allowed     */
+    CN_GRC_RESPONSE_TOO_LARGE : BYTE := 16#11; // Response packet too large     */
+    CN_GRC_CONFIG_TOO_SMALL : BYTE := 16#13; // Goldilocks complaint #1       */
+    CN_GRC_UNDEFINED_ATTR : BYTE := 16#14; // Attribute is undefined        */
+    CN_GRC_CONFIG_TOO_BIG : BYTE := 16#15; // Goldilocks complaint #2       */
+    CN_GRC_OBJ_NOT_EXISTING : BYTE := 16#16; // The object specified does NOT exist in the divce*/
+    CN_GRC_VENDOR_SPECIFIC_ERR : BYTE := 16#1F; //
+    CN_GRC_INVALID_PARAMETER : BYTE := 16#20; //
+    CN_GRC_BAD_KEY_IN_IOI : BYTE := 16#25; // Electronic key in IOI failed  */
+    CN_GRC_BAD_IOI_SIZE : BYTE := 16#26; // Invalid IOI size              */
+
+    //Additional Status Codes
+    CN_ORC_NO_BUFFER : WORD := 16#0301; // No buffer memory available    */
+    CN_ORC_BAD_SEGMENT : WORD := 16#0315; // Invalid segment in path       */
+END_VAR
+]]></Declaration>
+  </GVL>
+</TcPlcObject>

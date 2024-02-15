@@ -1,0 +1,146 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="MAIN" Id="{45566959-9dea-4820-86b7-449909cbcc8b}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM MAIN
+VAR
+    i : INT;
+    IdxGroup : UDINT;
+    IdxOffset : UDINT;
+    fbAdsRdWrInd : ADSRDWRTIND;
+    fbAdsRdWrRes : ADSRDWRTRES;
+    request : DUT_IncomingMsgRequest;
+    response : DUT_OutgoingMsgResponse;
+    nResponseLen : UINT;
+    nAdsResult : UDINT := 0;
+    nAdsResponsesSent : UDINT;
+    Attributes : ARRAY[1..4] OF STRING := ['TestReadOnlyAttribute1', 'TestReadOnlyAttribute2', 'TestReadOnlyAttribute3', '1'];
+    fbADSRDWRTINDEX : ADSRDWRTINDEX;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[CASE i OF
+
+    0: fbADSRDWRTINDEX(CLEAR := FALSE,
+            MINIDXGRP := 16#84000000,
+            VALID =>,
+            NETID =>,
+            PORT =>,
+            INVOKEID =>,
+            IDXGRP =>,
+            IDXOFFS =>,
+            RDLENGTH =>,
+            WRTLENGTH =>,
+            DATAADDR =>);
+
+        IF fbADSRDWRTINDEX.VALID THEN
+            IdxGroup := fbADSRDWRTINDEX.IDXGRP;
+            IdxOffset := fbADSRDWRTINDEX.IDXOFFS;
+            nResponseLen := 0;
+            MEMSET(ADR(request), 0, SIZEOF(request));
+            MEMSET(ADR(response), 0, SIZEOF(response));
+
+            IF IdxGroup = 16#848180E9 THEN
+                IF fbADSRDWRTINDEX.WRTLENGTH >= SIZEOF(request.reqHdr) THEN
+                    MEMCPY(ADR(request.reqHdr), fbADSRDWRTINDEX.DATAADDR, SIZEOF(request.reqHdr));
+                END_IF
+
+                IF fbADSRDWRTINDEX.WRTLENGTH > SIZEOF(request.reqHdr) THEN
+                    MEMCPY(ADR(request.reqData),
+                        fbADSRDWRTINDEX.DATAADDR + SIZEOF(request.reqHdr),
+                        fbADSRDWRTINDEX.WRTLENGTH - SIZEOF(request.reqHdr));
+                END_IF
+
+                i := 10;
+            ELSE
+                i := 20;
+            END_IF
+        END_IF
+
+    10: //new Ind from EthIp-Drv received
+        response.resHdr.nServiceCode := request.reqHdr.nServiceCode OR CONST.CN_SC_REPLY_MASK;
+        response.resHdr.nGeneralStatus := 0;
+        response.resHdr.nAdditionalStatus := 0;
+        response.resHdr.nDataLen := 0;
+
+        IF request.reqHdr.nServiceCode = CONST.CN_SC_GET_ATTR_SINGLE OR request.reqHdr.nServiceCode = CONST.CN_SC_SET_ATTR_SINGLE THEN
+            i := 11;
+        ELSE
+            response.resHdr.nGeneralStatus := CONST.CN_GRC_BAD_SERVICE;
+            nResponseLen := SIZEOF(response.resHdr);
+            i := 20;
+        END_IF
+
+    11: CASE request.reqHdr.nClassId OF
+            16#1000: //erlaubte Beispiel Class 0x10000
+                CASE request.reqHdr.nInstanceId OF
+                    16#1: //erlaubte Beispiel Instance 0x1
+                        CASE request.reqHdr.nAttributeId OF //Attributes 1-4 erlaubt; only attr 4 is settable 
+                            1, 2, 3: IF request.reqHdr.nServiceCode = CONST.CN_SC_SET_ATTR_SINGLE THEN
+                                    response.resHdr.nGeneralStatus := CONST.CN_GRC_ATTR_NOT_SETTABLE;
+                                    nResponseLen := SIZEOF(response.resHdr);
+                                    i := 20;
+                                ELSE
+                                    i := 12;
+                                END_IF
+                            4: IF request.reqHdr.nServiceCode = CONST.CN_SC_SET_ATTR_SINGLE THEN
+                                    i := 14;
+                                ELSE
+                                    i := 12;
+                                END_IF
+                        ELSE
+                            response.resHdr.nGeneralStatus := CONST.CN_GRC_UNDEFINED_ATTR;
+                            nResponseLen := SIZEOF(response.resHdr);
+                            i := 20;
+                        END_CASE
+                ELSE
+                    response.resHdr.nGeneralStatus := CONST.CN_GRC_BAD_CLASS_INSTANCE;
+                    nResponseLen := SIZEOF(response.resHdr);
+                    i := 20;
+                END_CASE
+        ELSE
+            response.resHdr.nGeneralStatus := CONST.CN_GRC_BAD_CLASS_INSTANCE;
+            nResponseLen := SIZEOF(response.resHdr);
+            i := 20;
+        END_CASE
+
+    12: //GetAttribute
+        response.resHdr.nGeneralStatus := CONST.CN_GRC_SUCCESS;
+        MEMCPY(ADR(response.resData), ADR(Attributes[request.reqHdr.nAttributeId]), SIZEOF(Attributes[request.reqHdr.nAttributeId]));
+        response.resHdr.nDataLen := INT_TO_UINT(LEN(Attributes[request.reqHdr.nAttributeId]));
+        nResponseLen := UDINT_TO_UINT(response.resHdr.nDataLen) + SIZEOF(response.resHdr);
+        i := 20;
+
+    14: //SetAttribute	
+        response.resHdr.nGeneralStatus := CONST.CN_GRC_SUCCESS;
+
+        IF request.reqHdr.nDataLen <= SIZEOF(STRING) - 1 THEN
+            MEMCPY(ADR(Attributes[request.reqHdr.nAttributeId]), ADR(request.reqData), request.reqHdr.nDataLen);
+        ELSE
+            response.resHdr.nGeneralStatus := CONST.CN_GRC_BAD_DATA; //zuviel Schreibdaten
+        END_IF
+
+        nResponseLen := SIZEOF(response.resHdr);
+        i := 20;
+
+    20: fbAdsRdWrRes(NETID := fbADSRDWRTINDEX.NETID,
+            PORT := fbADSRDWRTINDEX.PORT,
+            INVOKEID := fbADSRDWRTINDEX.INVOKEID,
+            RESULT := nAdsResult,
+            LEN := nResponseLen,
+            DATAADDR := ADR(Response),
+            RESPOND := TRUE);
+
+        i := 21;
+        nAdsResponsesSent := nAdsResponsesSent + 1;
+        fbADSRDWRTINDEX(CLEAR := TRUE);
+    21: i := 0;
+        fbAdsRdWrRes(RESPOND := FALSE);
+END_CASE
+]]></ST>
+    </Implementation>
+    <LineIds Name="MAIN">
+      <LineId Id="148" Count="117" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

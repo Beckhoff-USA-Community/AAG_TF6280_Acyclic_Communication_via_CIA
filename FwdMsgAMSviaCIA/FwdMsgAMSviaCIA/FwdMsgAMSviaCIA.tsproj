@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<TcSmProject xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.beckhoff.com/schemas/2012/07/TcSmProject" TcSmVersion="1.0" TcVersion="3.1.4024.55">
+	<Project ProjectGUID="{F17B26AC-29CD-4B5F-8738-94253209F658}" TargetNetId="5.58.183.60.1.1" Target64Bit="true" ShowHideConfigurations="#x6">
+		<System>
+			<Tasks>
+				<Task Id="3" Priority="20" CycleTime="100000" AmsPort="350" AdtTasks="true">
+					<Name>PlcTask</Name>
+				</Task>
+				<Task Id="5" Priority="2" CycleTime="10000" AmsPort="301">
+					<Name>EIP_Task</Name>
+					<Vars VarGrpType="1" InsertType="1">
+						<Name>Inputs</Name>
+					</Vars>
+					<Vars VarGrpType="2" InsertType="1">
+						<Name>Outputs</Name>
+					</Vars>
+					<Image Id="2" AddrType="1" ImageType="1">
+						<Name>Task 5-Image</Name>
+					</Image>
+				</Task>
+			</Tasks>
+		</System>
+		<Plc>
+			<Project File="PLC1.xti"/>
+		</Plc>
+		<Io>
+			<Device File="Device 1 (TC3 EIP Adapter).xti" Id="1"/>
+		</Io>
+	</Project>
+</TcSmProject>
